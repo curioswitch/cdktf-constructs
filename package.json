@@ -1,0 +1,27 @@
+{
+  "name": "@curioswitch/usecdk",
+  "version": "0.0.1",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "format": "biome format --write . && biome lint --write --unsafe . && prettier --write '**/*.yaml' '**/*.md'",
+    "lint": "biome check . && prettier --check '**/*.yaml' '**/*.md'"
+  },
+  "engines": {
+    "node": ">=18.0"
+  },
+  "packageManager": "pnpm@9.5.0",
+  "dependencies": {
+    "@cdktf/provider-github": "^14.2.3",
+    "@cdktf/provider-google": "^13.26.0",
+    "@cdktf/provider-google-beta": "^13.19.0",
+    "cdktf": "^0.20.8",
+    "constructs": "^10.3.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
+    "prettier": "^3.3.2"
+  }
+}

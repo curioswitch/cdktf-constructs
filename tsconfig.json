@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "module": "Node16",
+    "noEmit": true,
+    "moduleResolution": "Node16",
+    "lib": ["ESNext"]
+  },
+  "exclude": ["node_modules", "dist"]
+}
