@@ -2,6 +2,7 @@
   "name": "@curioswitch/cdktf-constructs",
   "version": "0.0.1",
   "license": "MIT",
+  "type": "module",
   "exports": {
     ".": "./src/index.ts"
   },
