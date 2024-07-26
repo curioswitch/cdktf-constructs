@@ -10,13 +10,13 @@ importers:
     dependencies:
       '@cdktf/provider-github':
         specifier: ^14.2.3
-        version: 14.2.3(cdktf@0.20.8(constructs@10.3.0))(constructs@10.3.0)
+        version: 14.2.3(cdktf@0.20.8)(constructs@10.3.0)
       '@cdktf/provider-google':
         specifier: ^13.27.0
-        version: 13.27.0(cdktf@0.20.8(constructs@10.3.0))(constructs@10.3.0)
+        version: 13.27.0(cdktf@0.20.8)(constructs@10.3.0)
       '@cdktf/provider-google-beta':
         specifier: ^13.20.0
-        version: 13.20.0(cdktf@0.20.8(constructs@10.3.0))(constructs@10.3.0)
+        version: 13.20.0(cdktf@0.20.8)(constructs@10.3.0)
       cdktf:
         specifier: ^0.20.8
         version: 0.20.8(constructs@10.3.0)
@@ -162,17 +162,17 @@ snapshots:
   '@biomejs/cli-win32-x64@1.8.3':
     optional: true
 
-  '@cdktf/provider-github@14.2.3(cdktf@0.20.8(constructs@10.3.0))(constructs@10.3.0)':
+  '@cdktf/provider-github@14.2.3(cdktf@0.20.8)(constructs@10.3.0)':
     dependencies:
       cdktf: 0.20.8(constructs@10.3.0)
       constructs: 10.3.0
 
-  '@cdktf/provider-google-beta@13.20.0(cdktf@0.20.8(constructs@10.3.0))(constructs@10.3.0)':
+  '@cdktf/provider-google-beta@13.20.0(cdktf@0.20.8)(constructs@10.3.0)':
     dependencies:
       cdktf: 0.20.8(constructs@10.3.0)
       constructs: 10.3.0
 
-  '@cdktf/provider-google@13.27.0(cdktf@0.20.8(constructs@10.3.0))(constructs@10.3.0)':
+  '@cdktf/provider-google@13.27.0(cdktf@0.20.8)(constructs@10.3.0)':
     dependencies:
       cdktf: 0.20.8(constructs@10.3.0)
       constructs: 10.3.0
