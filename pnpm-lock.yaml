@@ -12,11 +12,11 @@ importers:
         specifier: ^14.2.3
         version: 14.2.3(cdktf@0.20.8(constructs@10.3.0))(constructs@10.3.0)
       '@cdktf/provider-google':
-        specifier: ^13.26.0
-        version: 13.26.0(cdktf@0.20.8(constructs@10.3.0))(constructs@10.3.0)
+        specifier: ^13.27.0
+        version: 13.27.0(cdktf@0.20.8(constructs@10.3.0))(constructs@10.3.0)
       '@cdktf/provider-google-beta':
-        specifier: ^13.19.0
-        version: 13.19.0(cdktf@0.20.8(constructs@10.3.0))(constructs@10.3.0)
+        specifier: ^13.20.0
+        version: 13.20.0(cdktf@0.20.8(constructs@10.3.0))(constructs@10.3.0)
       cdktf:
         specifier: ^0.20.8
         version: 0.20.8(constructs@10.3.0)
@@ -28,8 +28,8 @@ importers:
         specifier: ^1.8.3
         version: 1.8.3
       prettier:
-        specifier: ^3.3.2
-        version: 3.3.2
+        specifier: ^3.3.3
+        version: 3.3.3
 
 packages:
 
@@ -93,15 +93,15 @@ packages:
       cdktf: ^0.20.0
       constructs: ^10.3.0
 
-  '@cdktf/provider-google-beta@13.19.0':
-    resolution: {integrity: sha512-C17F1hmuiW5A7ThkCUTTqpLgOiOKcKvh0xOZ7l06Bciy5QPaZjUnZQJFWbVF+5qRLXpxTXQNNss4oA9+Cls4KQ==}
+  '@cdktf/provider-google-beta@13.20.0':
+    resolution: {integrity: sha512-dWUjVjb1phOIyxY1bd86APfDOGAtgg56SGOgNPQXaG9mfzLZOVAanpGoa+4YTkR4p5VGQDUYIjlZ8+a3DKxSxQ==}
     engines: {node: '>= 18.12.0'}
     peerDependencies:
       cdktf: ^0.20.0
       constructs: ^10.3.0
 
-  '@cdktf/provider-google@13.26.0':
-    resolution: {integrity: sha512-jreZAcOfHz8k81X//8SwqQOHndPEtDkQsfh0lo2n3u0Tc6H7QlU6RsJQ+AoHjTAR+xK7+jfJ7JzEPLw/v54YIQ==}
+  '@cdktf/provider-google@13.27.0':
+    resolution: {integrity: sha512-NQeVv2FiNZ8jnJscPpimiHJj0UTJJcz4RSo+r4B6X3ICwMLpl971aOgGpkdQjIkzuPQ3ftmpDTxt3lNRth1bcg==}
     engines: {node: '>= 18.12.0'}
     peerDependencies:
       cdktf: ^0.20.0
@@ -120,8 +120,8 @@ packages:
     resolution: {integrity: sha512-vbK8i3rIb/xwZxSpTjz3SagHn1qq9BChLEfy5Hf6fB3/2eFbrwt2n9kHwQcS0CPTRBesreeAcsJfMq2229FnbQ==}
     engines: {node: '>= 16.14.0'}
 
-  prettier@3.3.2:
-    resolution: {integrity: sha512-rAVeHYMcv8ATV5d508CFdn+8/pHPpXeIid1DdrPwXnaAdH7cqjVbpJaT5eq4yRAFU/lsbwYwSF/n5iNrdJHPQA==}
+  prettier@3.3.3:
+    resolution: {integrity: sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -167,12 +167,12 @@ snapshots:
       cdktf: 0.20.8(constructs@10.3.0)
       constructs: 10.3.0
 
-  '@cdktf/provider-google-beta@13.19.0(cdktf@0.20.8(constructs@10.3.0))(constructs@10.3.0)':
+  '@cdktf/provider-google-beta@13.20.0(cdktf@0.20.8(constructs@10.3.0))(constructs@10.3.0)':
     dependencies:
       cdktf: 0.20.8(constructs@10.3.0)
       constructs: 10.3.0
 
-  '@cdktf/provider-google@13.26.0(cdktf@0.20.8(constructs@10.3.0))(constructs@10.3.0)':
+  '@cdktf/provider-google@13.27.0(cdktf@0.20.8(constructs@10.3.0))(constructs@10.3.0)':
     dependencies:
       cdktf: 0.20.8(constructs@10.3.0)
       constructs: 10.3.0
@@ -183,4 +183,4 @@ snapshots:
 
   constructs@10.3.0: {}
 
-  prettier@3.3.2: {}
+  prettier@3.3.3: {}
