@@ -12,7 +12,11 @@ import { ServiceAccount } from "@cdktf/provider-google/lib/service-account";
 import { ServiceAccountIamMember } from "@cdktf/provider-google/lib/service-account-iam-member";
 import { StorageBucket } from "@cdktf/provider-google/lib/storage-bucket";
 import { StorageBucketIamMember } from "@cdktf/provider-google/lib/storage-bucket-iam-member";
-import { type ITerraformDependable, TerraformOutput } from "cdktf";
+import {
+  type ITerraformDependable,
+  TerraformOutput,
+  type TerraformProvider,
+} from "cdktf";
 import { Construct } from "constructs";
 
 /** Configuration of a {@link GcpProject}. */
@@ -52,7 +56,7 @@ export interface GcpProjectConfig {
    * The {@link GoogleBetaProvider} to use for enabling beta features in the
    * project.
    */
-  googleBeta: GoogleBetaProvider;
+  googleBeta: TerraformProvider;
 
   /**
    * Any dependencies that should complete before project creation.
