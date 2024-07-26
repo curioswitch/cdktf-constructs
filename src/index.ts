@@ -1,2 +1,2 @@
-export * from "./gcp-project";
-export * from "./github-repository";
+export * from "./gcp-project/index.js";
+export * from "./github-repository/index.js";
