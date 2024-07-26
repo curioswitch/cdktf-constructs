@@ -1,5 +1,5 @@
 {
-  "name": "@curioswitch/tfcdk-constructs",
+  "name": "@curioswitch/cdktf-constructs",
   "version": "0.0.1",
   "license": "MIT",
   "exports": {

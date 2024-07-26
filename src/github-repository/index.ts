@@ -190,6 +190,7 @@ export class GitHubRepository extends Construct {
         protectedBranches: false,
         customBranchPolicies: true,
       },
+      ...config.prodEnvironmentConfig,
     });
 
     new RepositoryEnvironmentDeploymentPolicy(this, "env-prod-policy", {
