@@ -53,6 +53,12 @@ export interface GcpProjectConfig {
   githubEnvironment: string;
 
   /**
+   * The GCS storage location for Terraform state, defaults to 'US'.
+   * Terraform state is quite small and loaded / stored once per operation.
+   */
+  terraformStateLocation?: string;
+
+  /**
    * The {@link GoogleBetaProvider} to use for enabling beta features in the
    * project.
    */
@@ -64,12 +70,27 @@ export interface GcpProjectConfig {
   dependsOn?: ITerraformDependable[];
 }
 
+/**
+ * A GCP project with common configurations for GitHub Actions and Terraform.
+ */
 export class GcpProject extends Construct {
+  /** The created {@link Project}. */
   public readonly project: Project;
 
+  /** The created {@link IamWorkloadIdentityPool} for authenticating from GitHub actions. */
   public readonly githubIdentityPool: IamWorkloadIdentityPool;
+
+  /** The created {@link ServiceAccount} for applying changes with Terraform. */
   public readonly terraformAdminServiceAccount: ServiceAccount;
+
+  /** The created {@link ServiceAccount} for planning changes with Terraform. */
   public readonly terraformViewerServiceAccount: ServiceAccount;
+
+  /** The created {@link KmsKeyRing} for storing Terraform keys. */
+  public readonly terraformKeyring: KmsKeyRing;
+
+  /** The created {@link KmsCryptoKey} for encrypting Terraform secrets. */
+  public readonly terraformSecretsKey: KmsCryptoKey;
 
   constructor(scope: Construct, config: GcpProjectConfig) {
     super(scope, config.projectId);
@@ -93,7 +114,7 @@ export class GcpProject extends Construct {
     const tfState = new StorageBucket(this, "tfstate", {
       project: this.project.projectId,
       name: `${this.project.projectId}-tfstate`,
-      location: "US",
+      location: config.terraformStateLocation ?? "US",
       storageClass: "STANDARD",
       versioning: {
         enabled: true,
@@ -157,15 +178,15 @@ export class GcpProject extends Construct {
       service: "cloudkms.googleapis.com",
     });
 
-    const keyring = new KmsKeyRing(this, "terraform-keyring", {
+    this.terraformKeyring = new KmsKeyRing(this, "terraform-keyring", {
       project: this.project.projectId,
       name: "terraform",
       location: "global",
       dependsOn: [kmsService],
     });
 
-    const terraformKey = new KmsCryptoKey(this, "terraform-key", {
-      keyRing: keyring.id,
+    this.terraformSecretsKey = new KmsCryptoKey(this, "terraform-key", {
+      keyRing: this.terraformKeyring.id,
       name: "secrets",
     });
 
@@ -212,7 +233,7 @@ export class GcpProject extends Construct {
     });
 
     new KmsCryptoKeyIamMember(this, "terraform-viewer-key-decrypter", {
-      cryptoKeyId: terraformKey.id,
+      cryptoKeyId: this.terraformSecretsKey.id,
       role: "roles/cloudkms.cryptoOperator",
       member: this.terraformViewerServiceAccount.member,
     });
