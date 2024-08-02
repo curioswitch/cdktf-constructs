@@ -12,6 +12,7 @@ import {
   type RepositoryRulesetConfig,
 } from "@cdktf/provider-github/lib/repository-ruleset";
 import { TeamRepository } from "@cdktf/provider-github/lib/team-repository";
+import { Fn } from "cdktf";
 import { Construct } from "constructs";
 
 export interface GitHubRepositoryConfig {
@@ -190,6 +191,13 @@ export class GitHubRepository extends Construct {
         protectedBranches: false,
         customBranchPolicies: true,
       },
+      reviewers: config.adminTeam
+        ? [
+            {
+              teams: [Fn.tonumber(config.adminTeam)],
+            },
+          ]
+        : undefined,
       ...config.prodEnvironmentConfig,
     });
 
