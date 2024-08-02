@@ -67,6 +67,10 @@ export interface GcpProjectConfig {
 export class GcpProject extends Construct {
   public readonly project: Project;
 
+  public readonly githubIdentityPool: IamWorkloadIdentityPool;
+  public readonly terraformAdminServiceAccount: ServiceAccount;
+  public readonly terraformViewerServiceAccount: ServiceAccount;
+
   constructor(scope: Construct, config: GcpProjectConfig) {
     super(scope, config.projectId);
 
@@ -111,11 +115,15 @@ export class GcpProject extends Construct {
     // TODO: Dependencies seem fine but there seems to be a lag between project creation
     // and being able to create this. Executing apply twice for each project currently
     // is the workaround.
-    const idPool = new IamWorkloadIdentityPool(this, "github-id-pool", {
-      project: this.project.projectId,
-      workloadIdentityPoolId: "github",
-      dependsOn: [iam],
-    });
+    this.githubIdentityPool = new IamWorkloadIdentityPool(
+      this,
+      "github-id-pool",
+      {
+        project: this.project.projectId,
+        workloadIdentityPoolId: "github",
+        dependsOn: [iam],
+      },
+    );
 
     const orgName = config.githubInfraRepo.split("/")[0];
 
@@ -125,7 +133,7 @@ export class GcpProject extends Construct {
       {
         project: this.project.projectId,
         workloadIdentityPoolProviderId: "github",
-        workloadIdentityPoolId: idPool.workloadIdentityPoolId,
+        workloadIdentityPoolId: this.githubIdentityPool.workloadIdentityPoolId,
         attributeMapping: {
           "google.subject": "assertion.sub",
           "attribute.actor": "assertion.actor",
@@ -161,56 +169,64 @@ export class GcpProject extends Construct {
       name: "secrets",
     });
 
-    const terraformAdmin = new ServiceAccount(this, "terraform-admin", {
-      project: this.project.projectId,
-      accountId: "terraform-admin",
-    });
+    this.terraformAdminServiceAccount = new ServiceAccount(
+      this,
+      "terraform-admin",
+      {
+        project: this.project.projectId,
+        accountId: "terraform-admin",
+      },
+    );
 
     new ProjectIamMember(this, "terraform-admin-owner", {
       project: this.project.projectId,
       role: "roles/owner",
-      member: terraformAdmin.member,
+      member: this.terraformAdminServiceAccount.member,
     });
 
     new ServiceAccountIamMember(this, "terraform-admin-github-actions", {
-      serviceAccountId: terraformAdmin.name,
+      serviceAccountId: this.terraformAdminServiceAccount.name,
       role: "roles/iam.serviceAccountTokenCreator",
-      member: `principal://iam.googleapis.com/${idPool.name}/subject/repo:${config.githubInfraRepo}:environment:${config.githubEnvironment}`,
+      member: `principal://iam.googleapis.com/${this.githubIdentityPool.name}/subject/repo:${config.githubInfraRepo}:environment:${config.githubEnvironment}`,
     });
 
-    const terraformViewer = new ServiceAccount(this, "terraform-viewer", {
-      project: this.project.projectId,
-      accountId: "terraform-viewer",
-    });
+    this.terraformViewerServiceAccount = new ServiceAccount(
+      this,
+      "terraform-viewer",
+      {
+        project: this.project.projectId,
+        accountId: "terraform-viewer",
+      },
+    );
 
     new ProjectIamMember(this, "terraform-viewer-viewer", {
       project: this.project.projectId,
       role: "roles/viewer",
-      member: terraformViewer.member,
+      member: this.terraformViewerServiceAccount.member,
     });
 
     new ProjectIamMember(this, "terraform-viewer-serviceUser", {
       project: this.project.projectId,
       role: "roles/serviceusage.serviceUsageConsumer",
-      member: terraformViewer.member,
+      member: this.terraformViewerServiceAccount.member,
     });
 
     new KmsCryptoKeyIamMember(this, "terraform-viewer-key-decrypter", {
       cryptoKeyId: terraformKey.id,
       role: "roles/cloudkms.cryptoOperator",
-      member: terraformViewer.member,
+      member: this.terraformViewerServiceAccount.member,
     });
 
     new ProjectIamMember(this, "terraform-viewer-key-secretaccess", {
       project: this.project.projectId,
       role: "roles/secretmanager.secretAccessor",
-      member: terraformViewer.member,
+      member: this.terraformViewerServiceAccount.member,
     });
 
     new ServiceAccountIamMember(this, "terraform-viewer-github-actions", {
-      serviceAccountId: terraformViewer.name,
+      serviceAccountId: this.terraformViewerServiceAccount.name,
       role: "roles/iam.serviceAccountTokenCreator",
-      member: `principal://iam.googleapis.com/${idPool.name}/subject/repo:${config.githubInfraRepo}:environment:${config.githubEnvironment}-viewer`,
+      member: `principal://iam.googleapis.com/${this.githubIdentityPool.name}/subject/repo:${config.githubInfraRepo}:environment:${config.githubEnvironment}-viewer`,
     });
 
     // Need write permission to the state to take lock. While ideally we may use a different bucket, but
@@ -219,7 +235,7 @@ export class GcpProject extends Construct {
     new StorageBucketIamMember(this, "terraform-viewer-tfstate", {
       bucket: tfState.name,
       role: "roles/storage.objectUser",
-      member: terraformViewer.member,
+      member: this.terraformViewerServiceAccount.member,
     });
   }
 }
