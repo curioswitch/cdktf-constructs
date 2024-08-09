@@ -71,6 +71,8 @@ export class GitHubRepository extends Construct {
       allowMergeCommit: false,
       allowSquashMerge: true,
       allowRebaseMerge: false,
+      squashMergeCommitTitle: "PR_TITLE",
+      squashMergeCommitMessage: "BLANK",
 
       ...config.repositoryConfig,
     });
@@ -191,13 +193,6 @@ export class GitHubRepository extends Construct {
         protectedBranches: false,
         customBranchPolicies: true,
       },
-      reviewers: config.adminTeam
-        ? [
-            {
-              teams: [Fn.tonumber(config.adminTeam)],
-            },
-          ]
-        : undefined,
       ...config.prodEnvironmentConfig,
     });
 

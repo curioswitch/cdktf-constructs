@@ -77,6 +77,15 @@ export class GcpProject extends Construct {
   /** The created {@link Project}. */
   public readonly project: Project;
 
+  /**
+   * The GCS bucket name to hold Terraform state for this project.
+   * Note, there is no way to automatically provision this bucket with a remote backend,
+   * so we always first use local state and then migrate. This bucket name is returned as
+   * a raw string for convenience but is not meant to be a dependency - it only is useful
+   * as the value to {@link GcsBackend}.
+   */
+  public readonly tfstateBucketName: string;
+
   /** The created {@link IamWorkloadIdentityPool} for authenticating from GitHub actions. */
   public readonly githubIdentityPool: IamWorkloadIdentityPool;
 
@@ -111,7 +120,7 @@ export class GcpProject extends Construct {
       provider: config.googleBeta,
     });
 
-    const tfState = new StorageBucket(this, "tfstate", {
+    const tfstateBucket = new StorageBucket(this, "tfstate", {
       project: this.project.projectId,
       name: `${this.project.projectId}-tfstate`,
       location: config.terraformStateLocation ?? "US",
@@ -120,6 +129,7 @@ export class GcpProject extends Construct {
         enabled: true,
       },
     });
+    this.tfstateBucketName = `${config.projectId}-tfstate`;
 
     // Commonly needed for executing certain Terraform actions with
     // a user account.
@@ -168,7 +178,7 @@ export class GcpProject extends Construct {
       },
     );
 
-    new TerraformOutput(this, "github-identity-provider", {
+    new TerraformOutput(this, `github-identity-provider-${config.projectId}`, {
       staticId: true,
       value: idProvider.name,
     });
@@ -254,7 +264,7 @@ export class GcpProject extends Construct {
     // there is no such option. Generally we use permissions to protect against access to the infrastructure
     // itself and not the state so this is probably acceptable.
     new StorageBucketIamMember(this, "terraform-viewer-tfstate", {
-      bucket: tfState.name,
+      bucket: tfstateBucket.name,
       role: "roles/storage.objectUser",
       member: this.terraformViewerServiceAccount.member,
     });
