@@ -9,6 +9,7 @@ import { Construct } from "constructs";
 import { GcpProject } from "../gcp-project/index.js";
 import { GitHubRepository } from "../github-repository/index.js";
 
+/** Configuration for {@link Bootstrap}. */
 export interface BootstrapConfig {
   /** The name of the project being bootstrapped. */
   name: string;
