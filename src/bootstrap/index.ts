@@ -128,14 +128,14 @@ export class Bootstrap extends Construct {
     if (config.domain) {
       const alphaDnsZone = new DnsManagedZone(this, "alpha-dns-zone", {
         project: this.devProject.project.projectId,
-        name: `alpha-${config.domain.replace(".", "-")}`,
+        name: `alpha-${config.domain.replaceAll(".", "-")}`,
         dnsName: `alpha.${config.domain}.`,
         dependsOn: [this.devProject.dnsService],
       });
 
       const prodDnsZone = new DnsManagedZone(this, "prod-dns-zone", {
         project: this.prodProject.project.projectId,
-        name: config.domain.replace(".", "-"),
+        name: config.domain.replaceAll(".", "-"),
         dnsName: `${config.domain}.`,
         dependsOn: [this.prodProject.dnsService],
       });
