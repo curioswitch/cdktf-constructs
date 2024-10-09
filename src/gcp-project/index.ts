@@ -86,6 +86,9 @@ export class GcpProject extends Construct {
    */
   public readonly tfstateBucketName: string;
 
+  /** The created proejct service for cloud DNS to allow provisioning domains during bootstrap. */
+  public readonly dnsService: ProjectService;
+
   /** The created {@link IamWorkloadIdentityPool} for authenticating from GitHub actions. */
   public readonly githubIdentityPool: IamWorkloadIdentityPool;
 
@@ -136,6 +139,11 @@ export class GcpProject extends Construct {
     new ProjectService(this, "resourcemanager", {
       project: this.project.projectId,
       service: "cloudresourcemanager.googleapis.com",
+    });
+
+    this.dnsService = new ProjectService(this, "dns", {
+      project: this.project.projectId,
+      service: "dns.googleapis.com",
     });
 
     const iam = new ProjectService(this, "iam", {

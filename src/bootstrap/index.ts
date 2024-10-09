@@ -4,6 +4,7 @@ import { DataGoogleBillingAccount } from "@cdktf/provider-google/lib/data-google
 import { DataGoogleOrganization } from "@cdktf/provider-google/lib/data-google-organization/index.js";
 import { DnsManagedZone } from "@cdktf/provider-google/lib/dns-managed-zone/index.js";
 import { DnsRecordSet } from "@cdktf/provider-google/lib/dns-record-set/index.js";
+import { ProjectService } from "@cdktf/provider-google/lib/project-service/index.js";
 import { Fn, type TerraformProvider } from "cdktf";
 import { Construct } from "constructs";
 import { GcpProject } from "../gcp-project/index.js";
@@ -129,12 +130,14 @@ export class Bootstrap extends Construct {
         project: this.devProject.project.projectId,
         name: `alpha-${config.domain.replace(".", "-")}`,
         dnsName: `alpha.${config.domain}.`,
+        dependsOn: [this.devProject.dnsService],
       });
 
       const prodDnsZone = new DnsManagedZone(this, "prod-dns-zone", {
         project: this.prodProject.project.projectId,
         name: config.domain.replace(".", "-"),
         dnsName: `${config.domain}.`,
+        dependsOn: [this.prodProject.dnsService],
       });
 
       new DnsRecordSet(this, "prod-alpha-ns-delegate", {
