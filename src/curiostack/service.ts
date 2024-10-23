@@ -100,6 +100,10 @@ export class CurioStackService extends Construct {
       value: config.environment ?? project.split("-")[1],
     });
     env.push({
+      name: "GOOGLE_PROJECT",
+      value: project,
+    });
+    env.push({
       name: "OTEL_METRICS_EXPORTER",
       value: "otlp",
     });
