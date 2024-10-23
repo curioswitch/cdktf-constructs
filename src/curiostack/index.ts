@@ -43,6 +43,9 @@ export class CurioStack extends Construct {
   /** The project provisioned by CurioStack. */
   public readonly project: string;
 
+  /** The default location to deploy provisioned resources to. */
+  public readonly location: string;
+
   /** The docker repository created for pushing application images to. */
   public readonly dockerRepository: ArtifactRegistryRepository;
 
@@ -59,6 +62,7 @@ export class CurioStack extends Construct {
     super(scope, "curiostack");
 
     this.project = config.project;
+    this.location = config.location;
 
     const apps = new Apps(this, config);
     this.dockerRepository = apps.dockerRepository;
