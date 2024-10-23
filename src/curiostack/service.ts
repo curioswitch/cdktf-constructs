@@ -158,7 +158,7 @@ export class CurioStackService extends Construct {
 
     this.run = new GoogleCloudRunV2Service(this, "service", {
       name: config.name,
-      location: "us-central1",
+      location: config.curiostack.location,
       customAudiences: [config.name],
       ingress,
       template: {
