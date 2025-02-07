@@ -1,0 +1,23 @@
+name: Main Build
+on:
+  push:
+    branches:
+      - main
+      - release/**
+    paths-ignore:
+      - stacks/sysadmin/**
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  pull-requests: write
+
+concurrency:
+  group: terraform
+
+jobs:
+  apply:
+    uses: curioswitch/cdktf-actions/.github/workflows/main.yaml@a34a5c1eb67d85c179f2afa009d66ed59f4f18b5
+    with:
+      gcp_project_id: $${{ startsWith(github.ref_name, 'release/') && '${gcp_project_id_prod}' || '${gcp_project_id_dev}'}}
+      gcp_project_number: $${{ startsWith(github.ref_name, 'release/') && '${gcp_project_number_prod}' || '${gcp_project_number_dev}'}}

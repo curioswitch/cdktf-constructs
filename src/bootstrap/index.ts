@@ -1,10 +1,11 @@
+import path from "node:path";
+import { RepositoryFile } from "@cdktf/provider-github/lib/repository-file/index.js";
 import type { RepositoryConfig } from "@cdktf/provider-github/lib/repository/index.js";
 import { Team } from "@cdktf/provider-github/lib/team/index.js";
 import { DataGoogleBillingAccount } from "@cdktf/provider-google/lib/data-google-billing-account/index.js";
 import { DataGoogleOrganization } from "@cdktf/provider-google/lib/data-google-organization/index.js";
 import { DnsManagedZone } from "@cdktf/provider-google/lib/dns-managed-zone/index.js";
 import { DnsRecordSet } from "@cdktf/provider-google/lib/dns-record-set/index.js";
-import { ProjectService } from "@cdktf/provider-google/lib/project-service/index.js";
 import { Fn, type TerraformProvider } from "cdktf";
 import { Construct } from "constructs";
 import { GcpProject } from "../gcp-project/index.js";
@@ -32,6 +33,9 @@ export interface BootstrapConfig {
 
   /** Custom configuration to override {@link GitHubRepository} defaults for infra repo. */
   infraRepositoryConfig?: Omit<RepositoryConfig, "name">;
+
+  /** Whether to disable provisioning of GitHub workflow CI/CD scripts. */
+  disableGitHubWorkflows?: boolean;
 
   /** The google-beta provider to use to provision beta configuration of GCP projects. */
   googleBeta: TerraformProvider;
@@ -124,6 +128,31 @@ export class Bootstrap extends Construct {
         ],
       },
     });
+
+    if (!config.disableGitHubWorkflows) {
+      const templateVars = {
+        gcp_project_id_dev: this.devProject.project.projectId,
+        gcp_project_number_dev: this.devProject.project.number,
+        gcp_project_id_prod: this.prodProject.project.projectId,
+        gcp_project_number_prod: this.prodProject.project.number,
+      };
+      new RepositoryFile(this, "infra-ci-pr", {
+        repository: this.infraRepo.repository.name,
+        file: ".github/workflows/pr.yaml",
+        content: Fn.templatefile(
+          path.join(__dirname, "templates", "infraWorkflowPr.yaml.tftpl"),
+          templateVars,
+        ),
+      });
+      new RepositoryFile(this, "infra-ci-main", {
+        repository: this.infraRepo.repository.name,
+        file: ".github/workflows/main.yaml",
+        content: Fn.templatefile(
+          path.join(__dirname, "templates", "infraWorkflowMain.yaml.tftpl"),
+          templateVars,
+        ),
+      });
+    }
 
     if (config.domain) {
       const alphaDnsZone = new DnsManagedZone(this, "alpha-dns-zone", {
