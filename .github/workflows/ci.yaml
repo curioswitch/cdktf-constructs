@@ -30,19 +30,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: package.json
-          cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
+          bun-version-file: package.json
 
-      - name: install dependencies
-        run: pnpm install
+      - run: bun install
 
       - name: run lints
         # We don't have OS-specific code so would be completely repetitive to run
         # lint on all of them.
         if: ${{ startsWith(matrix.os, 'ubuntu-') }}
-        run: pnpm run lint
+        run: bun run lint

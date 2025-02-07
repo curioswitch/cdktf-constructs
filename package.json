@@ -13,16 +13,17 @@
   "engines": {
     "node": ">=18.0"
   },
-  "packageManager": "pnpm@9.6.0",
+  "packageManager": "bun@1.2.2",
   "dependencies": {
-    "@cdktf/provider-github": "^14.2.3",
-    "@cdktf/provider-google": "^13.27.0",
-    "@cdktf/provider-google-beta": "^13.20.0",
-    "cdktf": "^0.20.8",
-    "constructs": "^10.3.0"
+    "@cdktf/provider-github": "^14.5.0",
+    "@cdktf/provider-google": "^14.18.0",
+    "@cdktf/provider-google-beta": "^14.18.0",
+    "cdktf": "^0.20.11",
+    "constructs": "^10.4.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.8.3",
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^22.13.1",
     "prettier": "^3.3.3"
   }
 }
