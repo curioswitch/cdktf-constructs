@@ -1,11 +1,13 @@
 import { GoogleFirebaseProject } from "@cdktf/provider-google-beta/lib/google-firebase-project";
 import type { GoogleBetaProvider } from "@cdktf/provider-google-beta/lib/provider";
+import { DataGoogleIamTestablePermissions } from "@cdktf/provider-google/lib/data-google-iam-testable-permissions/index.js";
 import { IamWorkloadIdentityPool } from "@cdktf/provider-google/lib/iam-workload-identity-pool";
 import { IamWorkloadIdentityPoolProvider } from "@cdktf/provider-google/lib/iam-workload-identity-pool-provider";
 import { KmsCryptoKey } from "@cdktf/provider-google/lib/kms-crypto-key";
 import { KmsCryptoKeyIamMember } from "@cdktf/provider-google/lib/kms-crypto-key-iam-member";
 import { KmsKeyRing } from "@cdktf/provider-google/lib/kms-key-ring";
 import { Project } from "@cdktf/provider-google/lib/project";
+import { ProjectIamCustomRole } from "@cdktf/provider-google/lib/project-iam-custom-role/index.js";
 import { ProjectIamMember } from "@cdktf/provider-google/lib/project-iam-member";
 import { ProjectService } from "@cdktf/provider-google/lib/project-service";
 import { ServiceAccount } from "@cdktf/provider-google/lib/service-account";
@@ -13,7 +15,9 @@ import { ServiceAccountIamMember } from "@cdktf/provider-google/lib/service-acco
 import { StorageBucket } from "@cdktf/provider-google/lib/storage-bucket";
 import { StorageBucketIamMember } from "@cdktf/provider-google/lib/storage-bucket-iam-member";
 import {
+  Fn,
   type ITerraformDependable,
+  TerraformIterator,
   TerraformOutput,
   type TerraformProvider,
 } from "cdktf";
@@ -266,6 +270,37 @@ export class GcpProject extends Construct {
       serviceAccountId: this.terraformViewerServiceAccount.name,
       role: "roles/iam.serviceAccountTokenCreator",
       member: `principal://iam.googleapis.com/${this.githubIdentityPool.name}/subject/repo:${config.githubInfraRepo}:environment:${config.githubEnvironment}-viewer`,
+    });
+
+    // getIamPolicy not provided to viewer but commonly used in terraform plans. We can easily dynamically create a role for it.
+    const testablePermissions = new DataGoogleIamTestablePermissions(
+      this,
+      "gcp-testable-permissions",
+      {
+        fullResourceName: `//cloudresourcemanager.googleapis.com/projects/${this.project.projectId}`,
+        stages: ["GA", "BETA"],
+      },
+    );
+
+    const iamPolicyViewerRole = new ProjectIamCustomRole(
+      this,
+      "iam-policy-viewer",
+      {
+        roleId: "iamPolicyViewer",
+        title: "IAM Policy Viewer",
+        project: this.project.projectId,
+        permissions: TerraformIterator.fromList(
+          testablePermissions.permissions,
+        ).forExpressionForList(
+          'val.name if endswith(val.name, ".getIamPolicy")',
+        ) as unknown as string[], // Type definnition not correct
+      },
+    );
+
+    new ProjectIamMember(this, "terraform-viewer-iam-policy-viewer", {
+      project: this.project.projectId,
+      role: iamPolicyViewerRole.name,
+      member: this.terraformViewerServiceAccount.member,
     });
 
     // Need write permission to the state to take lock. While ideally we may use a different bucket, but
