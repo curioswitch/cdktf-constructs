@@ -1,3 +1,4 @@
+import path from "node:path";
 import { DataGoogleIamWorkloadIdentityPool } from "@cdktf/provider-google-beta/lib/data-google-iam-workload-identity-pool/index.js";
 import { ArtifactRegistryRepositoryIamMember } from "@cdktf/provider-google/lib/artifact-registry-repository-iam-member/index.js";
 import { ArtifactRegistryRepository } from "@cdktf/provider-google/lib/artifact-registry-repository/index.js";
@@ -5,7 +6,9 @@ import { IdentityPlatformConfig } from "@cdktf/provider-google/lib/identity-plat
 import { ProjectIamCustomRole } from "@cdktf/provider-google/lib/project-iam-custom-role/index.js";
 import { ProjectIamMember } from "@cdktf/provider-google/lib/project-iam-member/index.js";
 import { ProjectService } from "@cdktf/provider-google/lib/project-service/index.js";
-import type { TerraformProvider } from "cdktf";
+import { StorageBucketObject } from "@cdktf/provider-google/lib/storage-bucket-object/index.js";
+import { StorageBucket } from "@cdktf/provider-google/lib/storage-bucket/index.js";
+import { Fn, type TerraformProvider } from "cdktf";
 import { Construct } from "constructs";
 
 export * from "./service.js";
@@ -58,6 +61,9 @@ export class CurioStack extends Construct {
   /** The Cloud Run {@link ProjectService} for `dependsOn` of deployed cloud run services. */
   public readonly runService: ProjectService;
 
+  /** The bucket containing OTel configs. */
+  public readonly otelBucket: StorageBucket;
+
   constructor(scope: Construct, config: CurioStackConfig) {
     super(scope, "curiostack");
 
@@ -69,6 +75,7 @@ export class CurioStack extends Construct {
     this.ghcrRepository = apps.ghcrRepository;
     this.githubEnvironmentIamMember = apps.githubEnvironmentIamMember;
     this.runService = apps.runService;
+    this.otelBucket = apps.otelBucket;
 
     new Identity(this, config);
   }
@@ -79,6 +86,7 @@ class Apps extends Construct {
   public readonly ghcrRepository: ArtifactRegistryRepository;
   public readonly githubEnvironmentIamMember: string;
   public readonly runService: ProjectService;
+  public readonly otelBucket: StorageBucket;
 
   constructor(scope: Construct, config: CurioStackConfig) {
     super(scope, "apps");
@@ -173,6 +181,26 @@ class Apps extends Construct {
       },
 
       dependsOn: [artifactRegistryService],
+    });
+
+    new ArtifactRegistryRepositoryIamMember(this, "ghcr-repo-member-github", {
+      repository: this.ghcrRepository.name,
+      location: this.ghcrRepository.location,
+      role: "roles/artifactregistry.reader",
+      member: this.githubEnvironmentIamMember,
+    });
+
+    this.otelBucket = new StorageBucket(this, "otel-bucket", {
+      name: `${config.project}-otel`,
+      location: config.location,
+    });
+
+    new StorageBucketObject(this, "otel-default-config", {
+      bucket: this.otelBucket.name,
+      name: "otel-config-default.yaml",
+      content: Fn.file(
+        path.join(__dirname, "otel", "otel-config-default.yaml"),
+      ),
     });
   }
 }

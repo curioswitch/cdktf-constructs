@@ -8,6 +8,7 @@ import { SecretManagerSecretIamMember } from "@cdktf/provider-google/lib/secret-
 import type { SecretManagerSecretVersion } from "@cdktf/provider-google/lib/secret-manager-secret-version/index.js";
 import { ServiceAccountIamMember } from "@cdktf/provider-google/lib/service-account-iam-member/index.js";
 import { ServiceAccount } from "@cdktf/provider-google/lib/service-account/index.js";
+import { StorageBucketIamMember } from "@cdktf/provider-google/lib/storage-bucket-iam-member/index.js";
 import type { ITerraformDependable } from "cdktf";
 import { Construct } from "constructs";
 import type { CurioStack } from "./index.js";
@@ -33,6 +34,9 @@ export interface CurioStackServiceConfig {
     string,
     Pick<SecretManagerSecretVersion, "secret" | "version">
   >;
+
+  /** The image to use for OTel collector. */
+  otelCollectorImage?: string;
 
   /** The {@link CurioStack} to configure the service with. */
   curiostack: CurioStack;
@@ -157,8 +161,16 @@ export class CurioStackService extends Construct {
       dependsOn.push(secretIam);
     }
 
-    const ghcrRepo = config.curiostack.ghcrRepository;
-    const otelCollectorImage = `${ghcrRepo.location}-docker.pkg.dev/${ghcrRepo.project}/${ghcrRepo.name}/curioswitch/go-usegcp/otel-collector:latest`;
+    const otelIam = new StorageBucketIamMember(this, "otel-bucket-reader", {
+      bucket: config.curiostack.otelBucket.name,
+      role: "roles/storage.objectViewer",
+      member: this.serviceAccount.member,
+    });
+    dependsOn.push(otelIam);
+
+    const otelCollectorImage =
+      config.otelCollectorImage ??
+      "otel/opentelemetry-collector-contrib:0.119.0";
 
     this.run = new GoogleCloudRunV2Service(this, "service", {
       name: config.name,
@@ -206,7 +218,7 @@ export class CurioStackService extends Construct {
           {
             image: otelCollectorImage,
             name: "otel",
-            args: ["--config", "/otel/config.yaml"],
+            args: ["--config", "/otel/otel-config-default.yaml"],
             resources: {
               cpuIdle: true,
               startupCpuBoost: true,
@@ -215,8 +227,23 @@ export class CurioStackService extends Construct {
                 memory: "256Mi",
               },
             },
+            volumeMounts: [
+              {
+                name: "otel",
+                mountPath: "/otel",
+              },
+            ],
             // Startup time is relatively slow, we don't add a startup probe so
             // the main container can serve requests as soon as it's ready.
+          },
+        ],
+        volumes: [
+          {
+            name: "otel",
+            gcs: {
+              bucket: config.curiostack.otelBucket.name,
+              readOnly: true,
+            },
           },
         ],
       },

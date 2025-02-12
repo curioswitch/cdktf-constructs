@@ -38,9 +38,9 @@
 
     "@cdktf/provider-github": ["@cdktf/provider-github@14.5.0", "", { "peerDependencies": { "cdktf": "^0.20.0", "constructs": "^10.3.0" } }, "sha512-WzWSH4WZDZFcO6xLZMmqO5AFTFm+axW6bEB5nwVkRiMhP16phy9R1XkIn6m+FzzGzOsTs7GjFTQ/3DhcXC7UPg=="],
 
-    "@cdktf/provider-google": ["@cdktf/provider-google@14.18.0", "", { "peerDependencies": { "cdktf": "^0.20.0", "constructs": "^10.3.0" } }, "sha512-/G1MN5vQjnGRNt3mL1xm7oVYE78mT5ODecYzGNUJZGbt6wFNMv7cWTfH3XB4zsBgjCJP4c6pO8y7aWrC4QKg9w=="],
+    "@cdktf/provider-google": ["@cdktf/provider-google@14.19.0", "", { "peerDependencies": { "cdktf": "^0.20.0", "constructs": "^10.3.0" } }, "sha512-QnGzRK30BH1BSX047EX2Y3Fq7XxB+4DXNC+6nr7VKUbYvmWkFFhmR68yJtIIU35sd5Ab8JyBj/W6OEf2wq5fWw=="],
 
-    "@cdktf/provider-google-beta": ["@cdktf/provider-google-beta@14.18.0", "", { "peerDependencies": { "cdktf": "^0.20.0", "constructs": "^10.3.0" } }, "sha512-jvR06SyYuA9f/nkhTXK9WYZSKhTmbu4hvbcEuOkLqT6jylKbM2msvMUNSrbiTLAgod/D4gZzXrfQCcKmBrVoXQ=="],
+    "@cdktf/provider-google-beta": ["@cdktf/provider-google-beta@14.19.0", "", { "peerDependencies": { "cdktf": "^0.20.0", "constructs": "^10.3.0" } }, "sha512-/X3ux5FZHOKAhLVwlVgY26x6p4hOLrjNApZFL/UyEoLkclNX2rXHpZ3irnASHYcniubuFxqdf905jzC7G5GB6g=="],
 
     "@types/node": ["@types/node@22.13.1", "", { "dependencies": { "undici-types": "~6.20.0" } }, "sha512-jK8uzQlrvXqEU91UxiK5J7pKHyzgnI1Qnl0QDHIgVGuolJhRb9EEl28Cj9b3rGR8B2lhFCtvIm5os8lFnO/1Ew=="],
 
@@ -132,7 +132,7 @@
 
     "once": ["once@1.4.0", "", { "dependencies": { "wrappy": "1" } }, "sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w=="],
 
-    "prettier": ["prettier@3.4.2", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-e9MewbtFo+Fevyuxn/4rrcDAaq0IYxPGLvObpQjiZBMAzB9IGmzlnG9RZy3FFas+eBMu2vA0CszMeduow5dIuQ=="],
+    "prettier": ["prettier@3.5.0", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-quyMrVt6svPS7CjQ9gKb3GLEX/rl3BCL2oa/QkNcXv4YNVBC9olt3s+H7ukto06q7B1Qz46PbrKLO34PR6vXcA=="],
 
     "process-nextick-args": ["process-nextick-args@2.0.1", "", {}, "sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag=="],
 
