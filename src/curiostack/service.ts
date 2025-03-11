@@ -1,6 +1,7 @@
 import {
   GoogleCloudRunV2Service,
   type GoogleCloudRunV2ServiceTemplateContainersEnv,
+  type GoogleCloudRunV2ServiceTemplateScaling,
 } from "@cdktf/provider-google-beta/lib/google-cloud-run-v2-service/index.js";
 import { CloudRunServiceIamMember } from "@cdktf/provider-google/lib/cloud-run-service-iam-member/index.js";
 import { ProjectIamMember } from "@cdktf/provider-google/lib/project-iam-member/index.js";
@@ -37,6 +38,8 @@ export interface CurioStackServiceConfig {
 
   /** The image to use for OTel collector. */
   otelCollectorImage?: string;
+
+  scaling?: GoogleCloudRunV2ServiceTemplateScaling;
 
   /** The {@link CurioStack} to configure the service with. */
   curiostack: CurioStack;
@@ -180,7 +183,7 @@ export class CurioStackService extends Construct {
       template: {
         executionEnvironment: "EXECUTION_ENVIRONMENT_GEN2",
         serviceAccount: this.serviceAccount.email,
-        scaling: {
+        scaling: config.scaling ?? {
           minInstanceCount: 0,
           maxInstanceCount: 1,
         },
