@@ -1,19 +1,19 @@
-import { GoogleFirebaseProject } from "@cdktf/provider-google-beta/lib/google-firebase-project";
-import type { GoogleBetaProvider } from "@cdktf/provider-google-beta/lib/provider";
+import { GoogleFirebaseProject } from "@cdktf/provider-google-beta/lib/google-firebase-project/index.js";
+import type { GoogleBetaProvider } from "@cdktf/provider-google-beta/lib/provider/index.js";
 import { DataGoogleIamTestablePermissions } from "@cdktf/provider-google/lib/data-google-iam-testable-permissions/index.js";
-import { IamWorkloadIdentityPool } from "@cdktf/provider-google/lib/iam-workload-identity-pool";
-import { IamWorkloadIdentityPoolProvider } from "@cdktf/provider-google/lib/iam-workload-identity-pool-provider";
-import { KmsCryptoKey } from "@cdktf/provider-google/lib/kms-crypto-key";
-import { KmsCryptoKeyIamMember } from "@cdktf/provider-google/lib/kms-crypto-key-iam-member";
-import { KmsKeyRing } from "@cdktf/provider-google/lib/kms-key-ring";
-import { Project } from "@cdktf/provider-google/lib/project";
+import { IamWorkloadIdentityPoolProvider } from "@cdktf/provider-google/lib/iam-workload-identity-pool-provider/index.js";
+import { IamWorkloadIdentityPool } from "@cdktf/provider-google/lib/iam-workload-identity-pool/index.js";
+import { KmsCryptoKeyIamMember } from "@cdktf/provider-google/lib/kms-crypto-key-iam-member/index.js";
+import { KmsCryptoKey } from "@cdktf/provider-google/lib/kms-crypto-key/index.js";
+import { KmsKeyRing } from "@cdktf/provider-google/lib/kms-key-ring/index.js";
 import { ProjectIamCustomRole } from "@cdktf/provider-google/lib/project-iam-custom-role/index.js";
-import { ProjectIamMember } from "@cdktf/provider-google/lib/project-iam-member";
-import { ProjectService } from "@cdktf/provider-google/lib/project-service";
-import { ServiceAccount } from "@cdktf/provider-google/lib/service-account";
-import { ServiceAccountIamMember } from "@cdktf/provider-google/lib/service-account-iam-member";
-import { StorageBucket } from "@cdktf/provider-google/lib/storage-bucket";
-import { StorageBucketIamMember } from "@cdktf/provider-google/lib/storage-bucket-iam-member";
+import { ProjectIamMember } from "@cdktf/provider-google/lib/project-iam-member/index.js";
+import { ProjectService } from "@cdktf/provider-google/lib/project-service/index.js";
+import { Project } from "@cdktf/provider-google/lib/project/index.js";
+import { ServiceAccountIamMember } from "@cdktf/provider-google/lib/service-account-iam-member/index.js";
+import { ServiceAccount } from "@cdktf/provider-google/lib/service-account/index.js";
+import { StorageBucketIamMember } from "@cdktf/provider-google/lib/storage-bucket-iam-member/index.js";
+import { StorageBucket } from "@cdktf/provider-google/lib/storage-bucket/index.js";
 import {
   Fn,
   type ITerraformDependable,

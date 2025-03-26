@@ -1,5 +1,8 @@
 import path from "node:path";
+import { ActionsVariable } from "@cdktf/provider-github/lib/actions-variable/index.js";
+import { Branch } from "@cdktf/provider-github/lib/branch/index.js";
 import { RepositoryFile } from "@cdktf/provider-github/lib/repository-file/index.js";
+import { RepositoryPullRequest } from "@cdktf/provider-github/lib/repository-pull-request/index.js";
 import type { RepositoryConfig } from "@cdktf/provider-github/lib/repository/index.js";
 import { Team } from "@cdktf/provider-github/lib/team/index.js";
 import { DataGoogleBillingAccount } from "@cdktf/provider-google/lib/data-google-billing-account/index.js";
@@ -130,27 +133,68 @@ export class Bootstrap extends Construct {
     });
 
     if (!config.disableGitHubWorkflows) {
-      const templateVars = {
-        gcp_project_id_dev: this.devProject.project.projectId,
-        gcp_project_number_dev: this.devProject.project.number,
-        gcp_project_id_prod: this.prodProject.project.projectId,
-        gcp_project_number_prod: this.prodProject.project.number,
-      };
-      new RepositoryFile(this, "infra-ci-pr", {
+      new ActionsVariable(this, "gh-var-gcp-project-id-dev", {
         repository: this.infraRepo.repository.name,
+        variableName: "GCP_PROJECT_ID_DEV",
+        value: this.devProject.project.projectId,
+      });
+
+      new ActionsVariable(this, "gh-var-gcp-project-id-prod", {
+        repository: this.infraRepo.repository.name,
+        variableName: "GCP_PROJECT_ID_PROD",
+        value: this.prodProject.project.projectId,
+      });
+
+      new ActionsVariable(this, "gh-var-gcp-project-number-dev", {
+        repository: this.infraRepo.repository.name,
+        variableName: "GCP_PROJECT_NUMBER_DEV",
+        value: this.devProject.project.number,
+      });
+
+      new ActionsVariable(this, "gh-var-gcp-project-number-prod", {
+        repository: this.infraRepo.repository.name,
+        variableName: "GCP_PROJECT_NUMBER_PROD",
+        value: this.prodProject.project.number,
+      });
+
+      const ciBranch = new Branch(this, "ci-branch", {
+        repository: this.infraRepo.repository.name,
+        branch: `tf-${Fn.base64sha256(
+          `${Fn.filebase64(
+            path.join(__dirname, "templates", "infraWorkflowPr.yaml"),
+          )}${Fn.filebase64(
+            path.join(__dirname, "templates", "infraWorkflowMain.yaml"),
+          )}`,
+        )}`,
+      });
+
+      const ciPRWorkflow = new RepositoryFile(this, "infra-ci-pr", {
+        repository: this.infraRepo.repository.name,
+        branch: ciBranch.branch,
+        overwriteOnCreate: true,
         file: ".github/workflows/pr.yaml",
-        content: Fn.templatefile(
-          path.join(__dirname, "templates", "infraWorkflowPr.yaml.tftpl"),
-          templateVars,
+        content: Fn.file(
+          path.join(__dirname, "templates", "infraWorkflowPr.yaml"),
         ),
       });
-      new RepositoryFile(this, "infra-ci-main", {
+
+      const ciMainWorkflow = new RepositoryFile(this, "infra-ci-main", {
         repository: this.infraRepo.repository.name,
+        branch: ciBranch.branch,
+        overwriteOnCreate: true,
         file: ".github/workflows/main.yaml",
-        content: Fn.templatefile(
-          path.join(__dirname, "templates", "infraWorkflowMain.yaml.tftpl"),
-          templateVars,
+        content: Fn.file(
+          path.join(__dirname, "templates", "infraWorkflowMain.yaml"),
         ),
+      });
+
+      new RepositoryPullRequest(this, "infra-ci-pr-apply", {
+        baseRepository: this.infraRepo.repository.name,
+        baseRef: ciBranch.sourceBranch,
+        headRef: ciBranch.branch,
+        title: "Update CI workflows",
+        body: "This is an automated change to update CI workflows to the latest.",
+        dependsOn: [ciPRWorkflow, ciMainWorkflow],
       });
     }
 
