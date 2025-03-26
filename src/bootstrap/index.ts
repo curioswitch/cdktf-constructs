@@ -133,29 +133,48 @@ export class Bootstrap extends Construct {
     });
 
     if (!config.disableGitHubWorkflows) {
-      new ActionsVariable(this, "gh-var-gcp-project-id-dev", {
-        repository: this.infraRepo.repository.name,
-        variableName: "GCP_PROJECT_ID_DEV",
-        value: this.devProject.project.projectId,
-      });
+      for (const repo of [
+        {
+          name: "infra",
+          repo: this.infraRepo,
+        },
+        {
+          name: "app",
+          repo: this.apprepo,
+        },
+      ]) {
+        new ActionsVariable(this, `gh-var-${repo.name}-gcp-project-id-dev`, {
+          repository: repo.repo.repository.name,
+          variableName: "GCP_PROJECT_ID_DEV",
+          value: this.devProject.project.projectId,
+        });
 
-      new ActionsVariable(this, "gh-var-gcp-project-id-prod", {
-        repository: this.infraRepo.repository.name,
-        variableName: "GCP_PROJECT_ID_PROD",
-        value: this.prodProject.project.projectId,
-      });
+        new ActionsVariable(this, `gh-var-${repo.name}-gcp-project-id-prod`, {
+          repository: repo.repo.repository.name,
+          variableName: "GCP_PROJECT_ID_PROD",
+          value: this.prodProject.project.projectId,
+        });
 
-      new ActionsVariable(this, "gh-var-gcp-project-number-dev", {
-        repository: this.infraRepo.repository.name,
-        variableName: "GCP_PROJECT_NUMBER_DEV",
-        value: this.devProject.project.number,
-      });
+        new ActionsVariable(
+          this,
+          `gh-var-${repo.name}-gcp-project-number-dev`,
+          {
+            repository: repo.repo.repository.name,
+            variableName: "GCP_PROJECT_NUMBER_DEV",
+            value: this.devProject.project.number,
+          },
+        );
 
-      new ActionsVariable(this, "gh-var-gcp-project-number-prod", {
-        repository: this.infraRepo.repository.name,
-        variableName: "GCP_PROJECT_NUMBER_PROD",
-        value: this.prodProject.project.number,
-      });
+        new ActionsVariable(
+          this,
+          `gh-var-${repo.name}-gcp-project-number-prod`,
+          {
+            repository: repo.repo.repository.name,
+            variableName: "GCP_PROJECT_NUMBER_PROD",
+            value: this.prodProject.project.number,
+          },
+        );
+      }
 
       const ciBranch = new Branch(this, "ci-branch", {
         repository: this.infraRepo.repository.name,
