@@ -15,6 +15,7 @@
     "@cdktf/provider-github": "^14.5.0",
     "@cdktf/provider-google": "^14.19.0",
     "@cdktf/provider-google-beta": "^14.19.0",
+    "@cdktf/provider-random": "^11.1.0",
     "cdktf": "^0.20.11",
     "constructs": "^10.4.2"
   },

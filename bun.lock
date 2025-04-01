@@ -5,15 +5,16 @@
       "name": "@curioswitch/cdktf-constructs",
       "dependencies": {
         "@cdktf/provider-github": "^14.5.0",
-        "@cdktf/provider-google": "^14.18.0",
-        "@cdktf/provider-google-beta": "^14.18.0",
+        "@cdktf/provider-google": "^14.19.0",
+        "@cdktf/provider-google-beta": "^14.19.0",
+        "@cdktf/provider-random": "^11.1.0",
         "cdktf": "^0.20.11",
         "constructs": "^10.4.2",
       },
       "devDependencies": {
         "@biomejs/biome": "^1.9.4",
         "@types/node": "^22.13.1",
-        "prettier": "^3.3.3",
+        "prettier": "^3.5.0",
       },
     },
   },
@@ -41,6 +42,8 @@
     "@cdktf/provider-google": ["@cdktf/provider-google@14.19.0", "", { "peerDependencies": { "cdktf": "^0.20.0", "constructs": "^10.3.0" } }, "sha512-QnGzRK30BH1BSX047EX2Y3Fq7XxB+4DXNC+6nr7VKUbYvmWkFFhmR68yJtIIU35sd5Ab8JyBj/W6OEf2wq5fWw=="],
 
     "@cdktf/provider-google-beta": ["@cdktf/provider-google-beta@14.19.0", "", { "peerDependencies": { "cdktf": "^0.20.0", "constructs": "^10.3.0" } }, "sha512-/X3ux5FZHOKAhLVwlVgY26x6p4hOLrjNApZFL/UyEoLkclNX2rXHpZ3irnASHYcniubuFxqdf905jzC7G5GB6g=="],
+
+    "@cdktf/provider-random": ["@cdktf/provider-random@11.1.0", "", { "peerDependencies": { "cdktf": "^0.20.0", "constructs": "^10.3.0" } }, "sha512-qyA4NLQUPjxAbjhqqEJT+sAOSF6gE8Lv2LJ7fcqHcf6KcZU5m+fKlZujDTQ9Znwa14oRYIBJk5zj5jbFpZy1qg=="],
 
     "@types/node": ["@types/node@22.13.1", "", { "dependencies": { "undici-types": "~6.20.0" } }, "sha512-jK8uzQlrvXqEU91UxiK5J7pKHyzgnI1Qnl0QDHIgVGuolJhRb9EEl28Cj9b3rGR8B2lhFCtvIm5os8lFnO/1Ew=="],
 

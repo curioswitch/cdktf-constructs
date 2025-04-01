@@ -68,6 +68,7 @@ export class GitHubRepository extends Construct {
       name: config.name,
 
       autoInit: true,
+      vulnerabilityAlerts: true,
 
       allowMergeCommit: false,
       allowSquashMerge: true,
