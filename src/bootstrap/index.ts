@@ -9,6 +9,7 @@ import { DataGoogleBillingAccount } from "@cdktf/provider-google/lib/data-google
 import { DataGoogleOrganization } from "@cdktf/provider-google/lib/data-google-organization/index.js";
 import { DnsManagedZone } from "@cdktf/provider-google/lib/dns-managed-zone/index.js";
 import { DnsRecordSet } from "@cdktf/provider-google/lib/dns-record-set/index.js";
+import { StringResource } from "@cdktf/provider-random/lib/string-resource/index.js";
 import { Fn, type TerraformProvider } from "cdktf";
 import { Construct } from "constructs";
 import { GcpProject } from "../gcp-project/index.js";
@@ -129,6 +130,7 @@ export class Bootstrap extends Construct {
             teams: [Fn.tonumber(this.githubAdmins.id)],
           },
         ],
+        dependsOn: [this.githubAdmins],
       },
     });
 
@@ -176,21 +178,27 @@ export class Bootstrap extends Construct {
         );
       }
 
+      const branchSuffix = new StringResource(this, "ci-branch-suffix", {
+        length: 16,
+        special: false,
+        keepers: {
+          prWorkflow: Fn.filebase64(
+            path.join(__dirname, "templates", "infraWorkflowPr.yaml"),
+          ),
+          mainWorkflow: Fn.filebase64(
+            path.join(__dirname, "templates", "infraWorkflowMain.yaml"),
+          ),
+        },
+      });
+
       const ciBranch = new Branch(this, "ci-branch", {
         repository: this.infraRepo.repository.name,
-        branch: `tf-${Fn.base64sha256(
-          `${Fn.filebase64(
-            path.join(__dirname, "templates", "infraWorkflowPr.yaml"),
-          )}${Fn.filebase64(
-            path.join(__dirname, "templates", "infraWorkflowMain.yaml"),
-          )}`,
-        )}`,
+        branch: `tf-${branchSuffix.result}`,
       });
 
       const ciPRWorkflow = new RepositoryFile(this, "infra-ci-pr", {
         repository: this.infraRepo.repository.name,
         branch: ciBranch.branch,
-        overwriteOnCreate: true,
         file: ".github/workflows/pr.yaml",
         content: Fn.file(
           path.join(__dirname, "templates", "infraWorkflowPr.yaml"),
@@ -200,7 +208,6 @@ export class Bootstrap extends Construct {
       const ciMainWorkflow = new RepositoryFile(this, "infra-ci-main", {
         repository: this.infraRepo.repository.name,
         branch: ciBranch.branch,
-        overwriteOnCreate: true,
         file: ".github/workflows/main.yaml",
         content: Fn.file(
           path.join(__dirname, "templates", "infraWorkflowMain.yaml"),

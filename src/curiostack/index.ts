@@ -23,8 +23,8 @@ export interface CurioStackConfig {
   /** The domain name to host internet services on. */
   domain: string;
 
-  /** The GitHub repository that will be configured to deploy services. */
-  githubRepo: `${string}/${string}`;
+  /** The GitHub repository that will be configured to deploy services. Must be the full name, e.g. owner/repo. */
+  githubRepo: string;
 
   /** The ID of the identity pool used to authenticate GitHub. Defaults to `github`. */
   githubIdentityPoolId?: string;
