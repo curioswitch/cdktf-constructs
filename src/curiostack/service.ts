@@ -30,6 +30,9 @@ export interface CurioStackServiceConfig {
   /** Environment variables to set on the service. */
   env?: Record<string, string>;
 
+  /** Whether the container serves websockets. */
+  websockets?: boolean;
+
   /** Secrets to set as environment variables on the service. */
   envSecrets?: Record<
     string,
@@ -183,6 +186,7 @@ export class CurioStackService extends Construct {
       template: {
         executionEnvironment: "EXECUTION_ENVIRONMENT_GEN2",
         serviceAccount: this.serviceAccount.email,
+        timeout: config.websockets ? "3600s" : undefined,
         scaling: config.scaling ?? {
           minInstanceCount: 0,
           maxInstanceCount: 1,
@@ -214,7 +218,7 @@ export class CurioStackService extends Construct {
             },
             env: [...env],
             ports: {
-              name: "h2c",
+              name: !config.websockets ? "h2c" : "http1",
               containerPort: 8080,
             },
           },

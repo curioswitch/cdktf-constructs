@@ -11,6 +11,7 @@ import { StorageBucket } from "@cdktf/provider-google/lib/storage-bucket/index.j
 import { Fn, type TerraformProvider } from "cdktf";
 import { Construct } from "constructs";
 
+export * from "./hosting.js";
 export * from "./service.js";
 
 export interface CurioStackConfig {
@@ -64,8 +65,13 @@ export class CurioStack extends Construct {
   /** The bucket containing OTel configs. */
   public readonly otelBucket: StorageBucket;
 
+  /** The configuration of the CurioStack. */
+  public readonly config: CurioStackConfig;
+
   constructor(scope: Construct, config: CurioStackConfig) {
     super(scope, "curiostack");
+
+    this.config = config;
 
     this.project = config.project;
     this.location = config.location;
