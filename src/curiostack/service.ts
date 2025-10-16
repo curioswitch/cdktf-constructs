@@ -33,6 +33,9 @@ export interface CurioStackServiceConfig {
   /** Whether the container serves websockets. */
   websockets?: boolean;
 
+  /** Timeout for the service, as a duration ending with s, e.g. `1.5s`, `60s`. */
+  timeout?: string;
+
   /** Secrets to set as environment variables on the service. */
   envSecrets?: Record<
     string,
@@ -186,7 +189,7 @@ export class CurioStackService extends Construct {
       template: {
         executionEnvironment: "EXECUTION_ENVIRONMENT_GEN2",
         serviceAccount: this.serviceAccount.email,
-        timeout: config.websockets ? "3600s" : undefined,
+        timeout: config.timeout ?? (config.websockets ? "3600s" : undefined),
         scaling: config.scaling ?? {
           minInstanceCount: 0,
           maxInstanceCount: 1,
